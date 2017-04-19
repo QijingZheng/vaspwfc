@@ -33,6 +33,8 @@ module vaspwfc
     ! load the G coefficients
     call LOADWAVE(cket, ket, MySys)
 
+    ! initialize the input array to zero
+    wfc_k = (0._d, 0._d)
     ! from 1d coefficients to 3d grid
     do nplw = 1, MySys%NPLWS(ket%ikpts)
       i = MySys%grid_index(1,nplw,ket%ikpts)
