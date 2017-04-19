@@ -1,2 +1,3 @@
 # vaspwfc
-create wavefunction file from selected spin, kpoint and band index in VASP wavecar
+    Create wavefunction of selected spin, kpoint and band index from VASP
+    WAVECAR.
