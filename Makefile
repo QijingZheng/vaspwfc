@@ -3,7 +3,8 @@
 #-------------------------------------------------------------------------------
 FC= ifort -assume byterecl
 # FC= gfortran -I/home/zqj/apps/fftw/3.3.6/include/ -L/home/zqj/apps/fftw/3.3.6/lib/ -lfftw3
-FC= gfortran -I/home/zqj/apps/fftw/3.3.6/include/ -lfftw3
+# FC= gfortran -I/home/zqj/apps/fftw/3.3.6/include/ -lfftw3
+FC= gfortran -lfftw3
 FFLAGS= -g -O2
 MAKE = make
 
