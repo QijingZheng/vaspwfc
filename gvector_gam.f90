@@ -7,24 +7,37 @@ module gvector
   implicit none
   
   contains
-    
+
     subroutine GCUTS(MySys)
       use info
       implicit none
       type(system), intent(inout) :: MySys
 
       real(kind=q) :: CUTOF(3)
-      integer :: i
+      integer :: i, ng
+
+      ! logical :: fftchk_furth
 
       do i = 1, 3
         ! Gcut^2 / 2 = ENCUT
         CUTOF(i) =SQRT(MySys%ENCUT / RYTOEV)/(TPI/(MySys%MyLatt%ANORM(i)/AUTOA))
         ! twice Gcut incorporate all the points within the sphere
-        MySys%NGPTAR(i) = 2 * NINT(CUTOF(i)) + 1
+        ! MySys%NGPTAR(i) = 2 * NINT(CUTOF(i)) + 1
+        ng = 2 * (2 * NINT(CUTOF(i)) + 1)
         ! vasp use even number in NGX, NGY, NGZ
-        if (mod(MySys%NGPTAR(i), 2) /= 0) then
-          MySys%NGPTAR(i) = MySys%NGPTAR(i) + 1
+        if (mod(ng, 2) /= 0) then
+          ng = ng + 1
         end if
+        MySys%NGPTAR(i) = max(ng, MySys%NGPTAR(i))
+
+        ! choose a valid value for FFT
+        do
+          if (fftchk_furth(MySys%NGPTAR(i))) then
+            exit
+          else
+            MySys%NGPTAR(i) = MySys%NGPTAR(i) + 1
+          end if
+        end do
       end do
 
       allocate(MySys%LPCTX(MySys%NGPTAR(1)))
@@ -92,7 +105,8 @@ module gvector
 
       allocate(MySys%GX(MySys%MAXPLWS, MySys%NKPTS), &
                MySys%GY(MySys%MAXPLWS, MySys%NKPTS), &
-               MySys%GZ(MySys%MAXPLWS, MySys%NKPTS))
+               MySys%GZ(MySys%MAXPLWS, MySys%NKPTS), &
+               MySys%grid_index(3, MySys%MAXPLWS, MySys%NKPTS))
 
       do n = 1, MySys%NKPTS
         itmp = 0
@@ -120,6 +134,10 @@ module gvector
                  MySys%GX(itmp,n) = MySys%LPCTX(i)
                  MySys%GY(itmp,n) = MySys%LPCTY(j)
                  MySys%GZ(itmp,n) = MySys%LPCTZ(k)
+
+                 MySys%grid_index(1,itmp,n) = i
+                 MySys%grid_index(2,itmp,n) = j
+                 MySys%grid_index(3,itmp,n) = k
                end if
             end do
           end do
@@ -130,5 +148,41 @@ module gvector
       end do
 
     end subroutine
+
+    ! check whether the NIN is valid for FFT
+    logical function fftchk_furth(nin)
+      use prec
+      implicit none
+
+      integer, intent(in) :: nin
+
+      integer, parameter :: nfact = 4
+      integer, parameter, dimension(nfact) :: ifact = (/2, 3, 5, 7/)
+      integer, dimension(nfact) :: ncount
+      integer :: i, n, next
+
+      n=nin
+      do i=1,nfact
+        ncount(i) = 0
+        do
+          next = n / ifact(i)
+          if (next*ifact(i) == n) then
+            n = next
+            ncount(i) = ncount(i) + 1
+          else
+            exit
+          end if
+        end do
+      end do
+
+      if (n==1 .and. (ncount(1)/=0)) then
+        fftchk_furth=.true.
+      else
+        fftchk_furth=.false.
+      endif
+
+      return
+    end function fftchk_furth
+    
 
 end module gvector
