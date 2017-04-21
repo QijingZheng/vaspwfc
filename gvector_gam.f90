@@ -1,4 +1,4 @@
-module gvector
+module gvector_gam
   use prec
   use lattice
   use wavecar
@@ -184,5 +184,4 @@ module gvector
       return
     end function fftchk_furth
     
-
-end module gvector
+end module gvector_gam

@@ -16,7 +16,7 @@ SRC= prec.f90 lattice.f90 info.f90 wave.f90 gvector.f90 \
 	 wavefft.f90 main.f90
 
 SRC_GAM= prec.f90 lattice.f90 info.f90 wave.f90 gvector_gam.f90 \
-	 wavefft_gam.f90 main.f90
+	 wavefft_gam.f90 main_gam.f90
 
 OBJ = $(SRC:.f90=.o)
 OBJ_GAM = $(SRC_GAM:.f90=.o)
@@ -40,5 +40,5 @@ gam:	$(OBJ_GAM)
 	$(FC) $(FFLAGS) -o $(EXE_gam) $(OBJ_GAM) 
 
 clean:
-	rm -f *.mod *.a
-	rm -f $(OBJ) $(EXE) $(OBJ_PARGAMMA)
+	rm -f *.mod *.a *.o
+	rm -f $(OBJ) $(OBJ_GAM)
