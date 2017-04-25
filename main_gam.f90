@@ -1,4 +1,4 @@
-program vaspwfc
+program wfc
   use prec
   use info
   use lattice
@@ -43,7 +43,7 @@ program vaspwfc
 
   call freemem(MySys)
 
-end program vaspwfc
+end program wfc
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
