@@ -2,11 +2,18 @@
 # defaults
 #-------------------------------------------------------------------------------
 FC= ifort -assume byterecl
-# FC= gfortran -I/home/zqj/apps/fftw/3.3.6/include/ -L/home/zqj/apps/fftw/3.3.6/lib/ -lfftw3
-# FC= gfortran -I/home/zqj/apps/fftw/3.3.6/include/ -lfftw3
-FC= gfortran -lfftw3
+# FC= gfortran
+
 FFLAGS= -g -O2
-MAKE = make
+
+#LDFLAGS= -L/home/zqj/apps/fftw/3.3.6/lib/ 
+#LIBS= -lfftw3
+#FFLAGS+= -I/home/zqj/apps/fftw/3.3.6/include/
+
+# Have problem compiling with intel psxe/onemkl? uncomment following 3 lines
+#LDFLAGS=  -L${MKLROOT}/lib/intel64 -L${MKLROOT}/interfaces/fftw3xf/
+#LIBS= -lpthread -lm -ldl -lmkl_intel_lp64 -lmkl_sequential -lmkl_core
+#FFLAGS+= -I${MKLROOT}/include/fftw/
 
 #-------------------------------------------------------------------------------
 # Src
@@ -34,10 +41,10 @@ EXE_gam = vaspwfc_gam
 # Targets
 #-------------------------------------------------------------------------------
 wfc:	$(OBJ)
-	$(FC) $(FFLAGS) -o $(EXE) $(OBJ) 
+	$(FC) $(FFLAGS) $(LDFLAGS) -o $(EXE) $(OBJ) $(LIBS)
 
 gam:	$(OBJ_GAM)
-	$(FC) $(FFLAGS) -o $(EXE_gam) $(OBJ_GAM) 
+	$(FC) $(FFLAGS) $(LDFLAGS) -o $(EXE_gam) $(OBJ_GAM) $(LIBS)
 
 clean:
 	rm -f *.mod *.a *.o
